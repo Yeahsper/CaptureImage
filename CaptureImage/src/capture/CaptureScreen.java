@@ -24,10 +24,16 @@ public class CaptureScreen implements Runnable {
 	ImageWriter imageWriter;
 	static ArrayList<BufferedImage> arrayList = new ArrayList<BufferedImage>();
 
-	Float quality = 0.05f;
-	int nrOfImages = 150;
-	int fps = 30;
-	int delayGif = 32;
+	float quality = 0.05f;
+	int seconds = 10;
+	int fps = 10;
+	int nrOfImages = fps*seconds; //100
+	int gifLengthInSeconds = 2;
+	int gifLengthInMilliseconds = gifLengthInSeconds*1000; // 2000
+	int delayGif = nrOfImages / gifLengthInMilliseconds; // 100/ 2000 = 0.05
+//		delayGif = 0.05;
+	
+	
 	boolean createGif = false;
 	boolean createImage = false;
 	static int counter = 0;
@@ -47,14 +53,14 @@ public class CaptureScreen implements Runnable {
 					Thread.sleep(1000 / fps);
 					Thread.yield();
 					captureScreen();
-					//				System.out.println("Memory used="+(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/(1000)+"Kb");
+									System.out.println("Memory used="+(Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/(1000)+"Kb");
 					//				System.out.println(Thread.currentThread().getName());
 					System.out.println(counter);
 					Runtime.getRuntime().gc();
 					if(counter >= nrOfImages) {
 						break;
 					}
-				} catch (HeadlessException | AWTException | IOException | InterruptedException e) {
+				} catch (HeadlessException | AWTException | InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
@@ -107,7 +113,7 @@ public class CaptureScreen implements Runnable {
 		output.close();
 	}
 
-	public synchronized void captureScreen() throws HeadlessException, AWTException, IOException {
+	public synchronized void captureScreen() throws HeadlessException, AWTException {
 		image = new Robot().createScreenCapture(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
 		arrayList.add(image);
 		Runtime.getRuntime().gc(); Runtime.getRuntime().gc(); Runtime.getRuntime().gc();
